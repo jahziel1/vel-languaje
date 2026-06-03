@@ -3,7 +3,9 @@
 ## Where we are
 Language design phase — core design complete.
 
-### Completed — LANGUAGE DESIGN 100%
+### Completed
+
+#### Language design — 100%
 - Language name and philosophy
 - Full syntax (types, enums, inference, no null, no coercion)
 - Optional chaining ?. and null coalescing ??
@@ -16,8 +18,35 @@ Language design phase — core design complete.
 - Standard library (components, inputs, feedback, icons, utilities, virtualList, slots)
 - Control flow, error handling, functions, string interpolation
 
+#### Compiler build — in progress
+- [x] Lexer — tokenizes all Vel syntax, 11 tests
+- [x] Parser — builds full AST, Pratt expression parser, 13 tests
+- [x] Quality pipeline — rustfmt, clippy, pre-commit hook, CI, coverage 83%
+- [ ] Type checker
+- [ ] Code generator (WASM)
+- [ ] Runtime
+
 ### Next session starts here
-**Build the compiler** — lexer is first. Language design is complete.
+**Type checker** — verifies types, exhaustive match, optional handling, no coercion.
+
+## Compiler structure (so far)
+```
+compiler/src/
+  main.rs
+  lexer/
+    mod.rs        — Lexer struct, main dispatch, cursor helpers
+    token.rs      — Token enum with all Vel tokens
+    keywords.rs   — keyword-to-token mapping
+    string.rs     — string interpolation state machine
+    tests.rs      — 11 lexer tests
+  parser/
+    mod.rs        — Parser struct, helpers (expect/eat/advance)
+    ast.rs        — all AST node types (Program, Item, Stmt, Expr...)
+    toplevel.rs   — page, component, layout, store, type, enum, import
+    stmt.rs       — state, derived, guard, on, fn, if, match, let
+    expr.rs       — Pratt expression parser (correct precedence)
+    tests.rs      — 13 parser tests
+```
 
 ## Key files
 - `LENGUAJE.md` — all language decisions (source of truth)

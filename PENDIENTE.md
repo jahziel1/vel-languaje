@@ -47,15 +47,22 @@
 - children: Block (slots)
 - Keyboard events
 
-## AFTER DESIGN — Build (in order)
-- [ ] Compiler: lexer
-- [ ] Compiler: parser
-- [ ] Compiler: type checker
-- [ ] Compiler: code generator (WASM)
-- [ ] Runtime: rendering engine (Vello + wgpu)
-- [ ] Runtime: layout engine
-- [ ] Runtime: state management
-- [ ] Runtime: network
+## BUILD — Status
+
+### Compiler
+- [x] Lexer (`compiler/src/lexer/`) — 11 tests
+- [x] Parser (`compiler/src/parser/`) — 13 tests, full AST
+- [x] Quality pipeline — rustfmt, clippy, pre-commit, CI, coverage 83%
+- [ ] **Type checker** ← NEXT
+- [ ] Code generator (WASM output)
+
+### Runtime
+- [ ] Rendering engine (Vello + wgpu)
+- [ ] Layout engine
+- [ ] State management
+- [ ] Network layer
+
+### Tooling
 - [ ] CLI: new, run, build, deploy
 - [ ] Dev server with hot reload
 - [ ] VS Code extension (syntax, autocomplete, errors)
