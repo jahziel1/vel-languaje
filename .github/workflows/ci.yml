@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: "-D warnings"
+
+jobs:
+  quality:
+    name: Quality checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust (stable + tools)
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy, llvm-tools-preview
+
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            compiler/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('compiler/Cargo.lock') }}
+
+      # ── Formatting ───────────────────────────────────────────────────────────
+      - name: Check formatting
+        working-directory: compiler
+        run: cargo fmt --check
+
+      # ── Linting ──────────────────────────────────────────────────────────────
+      - name: Clippy
+        working-directory: compiler
+        run: cargo clippy -- -D warnings
+
+      # ── Tests ────────────────────────────────────────────────────────────────
+      - name: Tests
+        working-directory: compiler
+        run: cargo test
+
+      # ── File length — max 300 lines ──────────────────────────────────────────
+      - name: File length check
+        run: |
+          exceeded=0
+          while IFS= read -r -d '' file; do
+            lines=$(wc -l < "$file")
+            if [ "$lines" -gt 300 ]; then
+              echo "FAIL: $file has $lines lines (max 300)"
+              exceeded=1
+            fi
+          done < <(find compiler/src -name "*.rs" -print0)
+          if [ "$exceeded" -eq 1 ]; then exit 1; fi
+          echo "File length check passed"
+
+      # ── Coverage ─────────────────────────────────────────────────────────────
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
+
+      - name: Coverage — lines ≥ 80%, branches ≥ 70%
+        working-directory: compiler
+        run: |
+          cargo llvm-cov \
+            --fail-under-lines 80 \
+            --fail-under-regions 70 \
+            --lcov \
+            --output-path lcov.info
+
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v4
+        with:
+          files: compiler/lcov.info
+          fail_ci_if_error: false

@@ -42,38 +42,38 @@ pub enum Token {
     Color(String), // #RRGGBB hex
 
     // --- String tokens (supports interpolation) ---
-    StringStart,              // opening "
-    StringLiteral(String),    // literal text segment inside string
-    InterpolationStart,       // { inside a string
-    InterpolationEnd,         // } closing an interpolation
-    StringEnd,                // closing "
+    StringStart,           // opening "
+    StringLiteral(String), // literal text segment inside string
+    InterpolationStart,    // { inside a string
+    InterpolationEnd,      // } closing an interpolation
+    StringEnd,             // closing "
 
     // --- Delimiters ---
-    LBrace,    // {
-    RBrace,    // }
-    LParen,    // (
-    RParen,    // )
-    LBracket,  // [
-    RBracket,  // ]
+    LBrace,   // {
+    RBrace,   // }
+    LParen,   // (
+    RParen,   // )
+    LBracket, // [
+    RBracket, // ]
 
     // --- Punctuation ---
-    Comma,   // ,
-    Colon,   // :
-    Dot,     // .
-    Pipe,    // |
+    Comma, // ,
+    Colon, // :
+    Dot,   // .
+    Pipe,  // |
 
     // --- Operators ---
-    Arrow,    // ->
-    Assign,   // =
-    Plus,     // +
-    Minus,    // -
-    Star,     // *
-    Slash,    // /
+    Arrow,  // ->
+    Assign, // =
+    Plus,   // +
+    Minus,  // -
+    Star,   // *
+    Slash,  // /
 
-    Question,  // ?
-    OptChain,  // ?.
-    NullCoal,  // ??
-    Spread,    // ...
+    Question, // ?
+    OptChain, // ?.
+    NullCoal, // ??
+    Spread,   // ...
 
     Eq,    // ==
     NotEq, // !=
@@ -83,7 +83,7 @@ pub enum Token {
     GtEq,  // >=
 
     // --- Special ---
-    EOF,
+    Eof,
 }
 
 #[derive(Debug, Clone, Copy)]
