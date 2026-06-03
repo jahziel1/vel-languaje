@@ -1,6 +1,8 @@
 mod lexer;
+mod parser;
 
 use lexer::Lexer;
+use parser::Parser;
 
 fn main() {
     let source = r#"
@@ -36,4 +38,15 @@ page Store {
     }
 
     println!("\nTotal: {} tokens", tokens.len());
+
+    // ── Parser ────────────────────────────────────────────────────────────────
+    println!("\nParsing...\n");
+    let tokens2 = Lexer::new(source).tokenize();
+    match Parser::new(tokens2).parse() {
+        Ok(program) => println!("AST: {:#?}", program),
+        Err(e) => println!(
+            "Parse error at {}:{} — {}",
+            e.span.line, e.span.col, e.message
+        ),
+    }
 }
