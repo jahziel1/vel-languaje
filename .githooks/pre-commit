@@ -10,40 +10,41 @@ pass() { echo -e "${GREEN}✓${NC} $1"; }
 fail() { echo -e "${RED}✗${NC} $1"; exit 1; }
 info() { echo -e "${YELLOW}→${NC} $1"; }
 
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "  Vel pre-commit checks"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-cd "$(git rev-parse --show-toplevel)/compiler"
-
 # ── 1. Formatting ─────────────────────────────────────────────────────────────
-info "Formatting (rustfmt)"
-if cargo fmt --check 2>&1; then
+info "Formatting (rustfmt — all workspace)"
+if cargo fmt --all --check 2>&1; then
     pass "Formatting OK"
 else
-    fail "Formatting issues found — run: cd compiler && cargo fmt"
+    fail "Formatting issues — run: cargo fmt --all"
 fi
 
 # ── 2. Linting ────────────────────────────────────────────────────────────────
-info "Linting (clippy)"
-if cargo clippy -- -D warnings 2>&1; then
+info "Linting (clippy — all workspace)"
+if cargo clippy --all -- -D warnings 2>&1; then
     pass "Clippy OK"
 else
     fail "Clippy warnings found — fix them before committing"
 fi
 
 # ── 3. Tests ──────────────────────────────────────────────────────────────────
-info "Tests"
-if cargo test 2>&1; then
+info "Tests (all workspace)"
+if cargo test --all 2>&1; then
     pass "All tests passed"
 else
     fail "Tests failed"
 fi
 
 # ── 4. File length — max 300 lines ────────────────────────────────────────────
-info "File length (max 300 lines)"
+info "File length (max 300 lines — compiler + runtime)"
 exceeded=0
 while IFS= read -r -d '' file; do
     lines=$(wc -l < "$file")
@@ -51,7 +52,7 @@ while IFS= read -r -d '' file; do
         echo -e "  ${RED}✗${NC} $file — ${lines} lines (max 300)"
         exceeded=1
     fi
-done < <(find src -name "*.rs" -print0)
+done < <(find compiler/src runtime/src -name "*.rs" -print0)
 
 if [ "$exceeded" -eq 1 ]; then
     fail "Split files over 300 lines into smaller modules"
