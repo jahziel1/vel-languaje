@@ -32,6 +32,22 @@
 - Stack: compilador Rust → WASM → runtime Vello + wgpu
 - `page` = pantalla con URL, `component` = pieza reutilizable
 
+## Calidad — obligatorio al terminar cada feature o sesion
+
+Antes de declarar cualquier tarea terminada, ejecutar COMPLETO desde la raiz del repo:
+
+```
+cargo fmt --all --check   # o cargo fmt --all para corregir
+cargo clippy --all -- -D warnings
+cargo test --all
+find compiler/src runtime/src -name "*.rs" | while read f; do lines=$(wc -l < "$f"); if [ "$lines" -gt 300 ]; then echo "OVER: $f — $lines"; fi; done
+```
+
+Las cuatro deben pasar en verde. Si alguna falla, corregir antes de continuar.
+Esto equivale a correr el pre-commit hook manualmente — hacerlo SIEMPRE, no solo al final de la sesion.
+
+**Regla de 300 lineas**: ningun archivo `.rs` en `compiler/src/` ni `runtime/src/` puede superar 300 lineas. Si un archivo crece mas, splitearlo en modulos hijos antes de terminar la sesion. El pre-commit hook (`cargo fmt + clippy + tests + wc -l`) cubre ambos crates — no dejar deuda que lo rompa.
+
 ## Lo que NO hacemos
 - No prototipos rapidos — construimos el lenguaje real
 - No comprometer la vision por simplificar el trabajo

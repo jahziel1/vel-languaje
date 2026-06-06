@@ -1,0 +1,31 @@
+[package]
+name    = "vel-runtime"
+version = "0.1.0"
+edition = "2024"
+
+[features]
+default  = []
+renderer = ["dep:vello", "dep:wgpu", "dep:winit", "dep:pollster", "dep:skrifa", "dep:ureq"]
+
+[dependencies]
+wasmtime    = "29"
+serde_json  = "1"
+# GPU renderer — only compiled when the `renderer` feature is active
+vello    = { version = "0.4", optional = true }
+wgpu     = { version = "23", optional = true }
+winit    = { version = "0.30", optional = true }
+pollster = { version = "0.3", optional = true }
+skrifa   = { version = "0.26", optional = true }
+ureq     = { version = "2", optional = true }
+
+[dev-dependencies]
+vel-compiler = { path = "../compiler" }
+
+[lints.rust]
+unsafe_code       = "forbid"
+unused_imports    = "warn"
+dead_code         = "warn"
+unused_variables  = "warn"
+
+[lints.clippy]
+all = "warn"

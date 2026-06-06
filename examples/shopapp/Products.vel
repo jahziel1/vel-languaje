@@ -1,0 +1,55 @@
+import auth from "stores/auth"
+
+type Product {
+    id:    Number
+    name:  Text
+    price: Number
+}
+
+page Products {
+    state {
+        products: Result<List<Product>> = try api.get("https://fakestoreapi.com/products?limit=5")
+    }
+
+    fn goToProduct(id: Number) {
+        go("/product", id: id)
+    }
+
+    fn doLogout() {
+        auth.logout()
+        go("/login")
+    }
+
+    column(padding: 32, gap: 24) {
+        row(gap: 16) {
+            text("Products") {
+                fontSize: 24
+                bold: true
+            }
+            Button("Logout", onClick: doLogout) {}
+        }
+
+        match products {
+            Loading -> column(gap: 8) {
+                spinner()
+                text("Loading products...")
+            }
+
+            Success(data) -> list(data) {
+                item -> row(gap: 16) {
+                    column(gap: 4) {
+                        text("{item.name}")
+                        text("${item.price}") {
+                            fontSize: 14
+                        }
+                    }
+                    Button("View", onClick: goToProduct) {}
+                }
+            }
+
+            Error(msg) -> text("Error: {msg}") {
+                color: #ef4444
+            }
+        }
+    }
+}

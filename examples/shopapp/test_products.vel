@@ -1,0 +1,19 @@
+type Product {
+    id:    Number
+    name:  Text
+    price: Number
+}
+
+page Products {
+    state {
+        products: Result<List<Product>> = try api.get("https://fakestoreapi.com/products")
+    }
+
+    column(padding: 32) {
+        match products {
+            Loading       -> spinner()
+            Success(data) -> list(data) { item -> text("{item.name}") }
+            Error(msg)    -> text("Error: {msg}")
+        }
+    }
+}

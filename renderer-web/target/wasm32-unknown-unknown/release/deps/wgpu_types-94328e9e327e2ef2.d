@@ -1,0 +1,10 @@
+C:\Users\diabl\OneDrive\Documentos\cambitasapp\vel-lang\renderer-web\target\wasm32-unknown-unknown\release\deps\wgpu_types-94328e9e327e2ef2.d: C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wgpu-types-23.0.0\src\lib.rs C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wgpu-types-23.0.0\src\assertions.rs C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wgpu-types-23.0.0\src\counters.rs C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wgpu-types-23.0.0\src\math.rs
+
+C:\Users\diabl\OneDrive\Documentos\cambitasapp\vel-lang\renderer-web\target\wasm32-unknown-unknown\release\deps\libwgpu_types-94328e9e327e2ef2.rlib: C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wgpu-types-23.0.0\src\lib.rs C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wgpu-types-23.0.0\src\assertions.rs C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wgpu-types-23.0.0\src\counters.rs C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wgpu-types-23.0.0\src\math.rs
+
+C:\Users\diabl\OneDrive\Documentos\cambitasapp\vel-lang\renderer-web\target\wasm32-unknown-unknown\release\deps\libwgpu_types-94328e9e327e2ef2.rmeta: C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wgpu-types-23.0.0\src\lib.rs C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wgpu-types-23.0.0\src\assertions.rs C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wgpu-types-23.0.0\src\counters.rs C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wgpu-types-23.0.0\src\math.rs
+
+C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wgpu-types-23.0.0\src\lib.rs:
+C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wgpu-types-23.0.0\src\assertions.rs:
+C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wgpu-types-23.0.0\src\counters.rs:
+C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\wgpu-types-23.0.0\src\math.rs:

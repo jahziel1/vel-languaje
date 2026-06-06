@@ -1,0 +1,20 @@
+export store auth {
+    state {
+        isLoggedIn = false
+        userId     = 0
+    }
+
+    api.headers {
+        Authorization: "Bearer demo-token"
+    }
+
+    fn login() {
+        isLoggedIn = true
+        userId     = 1
+    }
+
+    fn logout() {
+        isLoggedIn = false
+        userId     = 0
+    }
+}

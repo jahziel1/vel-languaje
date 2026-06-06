@@ -2,6 +2,17 @@ use super::ast::*;
 use super::{ParseError, ParseResult, Parser};
 use crate::lexer::token::Token;
 
+fn breakpoint_from_str(s: &str) -> Option<Breakpoint> {
+    match s {
+        "phone" => Some(Breakpoint::Phone),
+        "mobile" => Some(Breakpoint::Mobile),
+        "tablet" => Some(Breakpoint::Tablet),
+        "desktop" => Some(Breakpoint::Desktop),
+        "wide" => Some(Breakpoint::Wide),
+        _ => None,
+    }
+}
+
 impl Parser {
     pub(super) fn parse_stmt(&mut self) -> ParseResult<Stmt> {
         match self.current() {
@@ -15,6 +26,18 @@ impl Parser {
             // assignment: `name = expr` — ident followed by `=`
             Token::Ident(_) if matches!(self.peek(), Token::Assign) => {
                 self.parse_let().map(Stmt::Let)
+            }
+            // block-only element call: `column { ... }` (no parens)
+            Token::Ident(_) if matches!(self.peek(), Token::LBrace) => {
+                let ident = self.expect_ident()?;
+                self.advance(); // consume '{'
+                let (block_args, stmts) = self.parse_element_block_body()?;
+                let block = if stmts.is_empty() { None } else { Some(stmts) };
+                Ok(Stmt::Expr(Expr::Call(
+                    Box::new(Expr::Ident(ident)),
+                    block_args,
+                    block,
+                )))
             }
             _ => self.parse_expr(0).map(Stmt::Expr),
         }
@@ -139,6 +162,11 @@ impl Parser {
                 self.expect_rparen()?;
                 Ok((OnEvent::Key(key), None))
             }
+            Token::Ident(name) if breakpoint_from_str(&name).is_some() => {
+                let bp = breakpoint_from_str(&name).unwrap();
+                self.advance();
+                Ok((OnEvent::Responsive(bp), None))
+            }
             other => Err(ParseError::new(
                 format!("unknown 'on' event: {:?}", other),
                 self.current_span(),
@@ -222,6 +250,14 @@ impl Parser {
                 self.advance();
                 Ok(Pattern::Wildcard)
             }
+            Token::True => {
+                self.advance();
+                Ok(Pattern::Ident("true".to_owned()))
+            }
+            Token::False => {
+                self.advance();
+                Ok(Pattern::Ident("false".to_owned()))
+            }
             Token::Ident(name) => {
                 self.advance();
                 if self.check(&Token::LParen) {
@@ -251,16 +287,5 @@ impl Parser {
         self.expect(&Token::Assign)?;
         let value = self.parse_expr(0)?;
         Ok(LetStmt { name, value })
-    }
-
-    // ── Helper ────────────────────────────────────────────────────────────────
-
-    pub(super) fn parse_stmts_until_rbrace(&mut self) -> ParseResult<Vec<Stmt>> {
-        let mut stmts = Vec::new();
-        while !self.check(&Token::RBrace) && !self.is_at_end() {
-            stmts.push(self.parse_stmt()?);
-        }
-        self.expect_rbrace()?;
-        Ok(stmts)
     }
 }

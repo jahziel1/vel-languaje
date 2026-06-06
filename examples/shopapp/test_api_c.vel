@@ -1,0 +1,17 @@
+page Products {
+    state {
+        products = try api.get("https://fakestoreapi.com/products")
+    }
+
+    fn goToProduct(id: Number) {
+        go("/product", id: id)
+    }
+
+    column(padding: 32) {
+        match products {
+            Loading       -> spinner()
+            Success(data) -> text("loaded")
+            Error(msg)    -> text("Error: {msg}")
+        }
+    }
+}

@@ -10,6 +10,7 @@ pub enum Token {
     From,
     Type,
     Enum,
+    Theme,
     State,
     Derived,
     On,

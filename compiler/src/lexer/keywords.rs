@@ -13,6 +13,7 @@ pub fn keyword_or_ident(ident: String) -> Token {
         "from" => Token::From,
         "type" => Token::Type,
         "enum" => Token::Enum,
+        "theme" => Token::Theme,
         // State
         "state" => Token::State,
         "derived" => Token::Derived,

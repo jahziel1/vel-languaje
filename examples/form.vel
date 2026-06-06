@@ -1,0 +1,19 @@
+page Form {
+    state {
+        name = ""
+        submitted = false
+    }
+
+    fn submit() {
+        submitted = true
+    }
+
+    column(padding: 24, gap: 16) {
+        text("Contact Form")
+        input(name, placeholder: "Your name...", onEnter: submit)
+        Button("Submit", onClick: submit)
+        if submitted {
+            text("Hello")
+        }
+    }
+}

@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+wasm-encoder = "0.251.0"
 
 [lints.rust]
 unsafe_code = "forbid"
@@ -13,3 +14,7 @@ unused_variables = "warn"
 
 [lints.clippy]
 all = "warn"
+
+[dev-dependencies]
+wasmparser = "0.251.0"
+tempfile = "3"

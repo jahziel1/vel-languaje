@@ -1,0 +1,44 @@
+type Product {
+    id:          Number
+    name:        Text
+    price:       Number
+    description: Text
+    category:    Text
+}
+
+page Product(id: Number) {
+    state {
+        product: Result<Product> = try api.get("https://fakestoreapi.com/products/{id}")
+    }
+
+    fn goBack() {
+        go(back)
+    }
+
+    column(padding: 32, gap: 24) {
+        Button("← Back", onClick: goBack) {}
+
+        match product {
+            Loading -> spinner()
+
+            Success(data) -> column(gap: 16) {
+                text("{data.name}") {
+                    fontSize: 22
+                    bold: true
+                }
+                text("${data.price}") {
+                    fontSize: 18
+                }
+                text("{data.category}") {
+                    fontSize: 14
+                    color: #6b7280
+                }
+                text("{data.description}")
+            }
+
+            Error(msg) -> text("Failed to load: {msg}") {
+                color: #ef4444
+            }
+        }
+    }
+}

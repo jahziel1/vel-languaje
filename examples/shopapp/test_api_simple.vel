@@ -1,0 +1,8 @@
+page Profile {
+    state { user = try api.get("https://api.example.com/user") }
+    match user {
+        Loading       -> text("Loading...")
+        Error(msg)    -> text("Error")
+        Success(data) -> text("Loaded")
+    }
+}

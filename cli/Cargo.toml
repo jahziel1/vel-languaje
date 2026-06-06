@@ -1,0 +1,22 @@
+[package]
+name    = "vel"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "vel"
+path = "src/main.rs"
+
+[dependencies]
+notify = "8.2.0"
+vel-compiler = { path = "../compiler" }
+vel-runtime  = { path = "../runtime", features = ["renderer"] }
+
+[lints.rust]
+unsafe_code      = "forbid"
+unused_imports   = "warn"
+dead_code        = "warn"
+unused_variables = "warn"
+
+[lints.clippy]
+all = "warn"

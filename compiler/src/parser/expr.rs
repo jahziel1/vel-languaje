@@ -109,6 +109,11 @@ impl Parser {
                 self.advance();
                 Ok(Expr::Ident(name))
             }
+            // `theme` keyword used as an expression identifier (e.g. theme.colors.X)
+            Token::Theme => {
+                self.advance();
+                Ok(Expr::Ident("theme".to_owned()))
+            }
             Token::Not => {
                 self.advance();
                 let operand = self.parse_expr(18)?;
@@ -180,47 +185,6 @@ impl Parser {
     }
 
     // ── Call arguments ────────────────────────────────────────────────────────
-
-    /// Parse `(arg, name: arg, ...)` with optional trailing `{ block }`.
-    pub(super) fn parse_call_args(&mut self) -> ParseResult<(Vec<Arg>, Option<Vec<Stmt>>)> {
-        self.expect_lparen()?;
-        let mut args = Vec::new();
-
-        while !self.check(&Token::RParen) && !self.is_at_end() {
-            let arg = self.parse_arg()?;
-            args.push(arg);
-            if !self.eat(&Token::Comma) {
-                break;
-            }
-        }
-        self.expect_rparen()?;
-
-        // Optional UI block: `column(padding: 16) { ... }`
-        let block = if self.check(&Token::LBrace) {
-            self.advance();
-            Some(self.parse_stmts_until_rbrace()?)
-        } else {
-            None
-        };
-
-        Ok((args, block))
-    }
-
-    fn parse_arg(&mut self) -> ParseResult<Arg> {
-        // Named arg: `name: expr`
-        if matches!(self.current(), Token::Ident(_)) && matches!(self.peek(), Token::Colon) {
-            let name = self.expect_ident()?;
-            self.advance(); // consume ':'
-            let value = self.parse_expr(0)?;
-            return Ok(Arg {
-                name: Some(name),
-                value,
-            });
-        }
-        // Positional
-        let value = self.parse_expr(0)?;
-        Ok(Arg { name: None, value })
-    }
 
     // ── List literal ──────────────────────────────────────────────────────────
 

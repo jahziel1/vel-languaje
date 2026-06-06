@@ -1,0 +1,11 @@
+C:\Users\diabl\OneDrive\Documentos\cambitasapp\vel-lang\renderer-web\target\wasm32-unknown-unknown\debug\deps\bitflags-0427e0738bc0d5fb.d: C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bitflags-2.12.1\src\lib.rs C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bitflags-2.12.1\src\iter.rs C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bitflags-2.12.1\src\parser.rs C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bitflags-2.12.1\src\traits.rs C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bitflags-2.12.1\src\public.rs C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bitflags-2.12.1\src\internal.rs C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bitflags-2.12.1\src\external.rs
+
+C:\Users\diabl\OneDrive\Documentos\cambitasapp\vel-lang\renderer-web\target\wasm32-unknown-unknown\debug\deps\libbitflags-0427e0738bc0d5fb.rmeta: C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bitflags-2.12.1\src\lib.rs C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bitflags-2.12.1\src\iter.rs C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bitflags-2.12.1\src\parser.rs C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bitflags-2.12.1\src\traits.rs C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bitflags-2.12.1\src\public.rs C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bitflags-2.12.1\src\internal.rs C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bitflags-2.12.1\src\external.rs
+
+C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bitflags-2.12.1\src\lib.rs:
+C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bitflags-2.12.1\src\iter.rs:
+C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bitflags-2.12.1\src\parser.rs:
+C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bitflags-2.12.1\src\traits.rs:
+C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bitflags-2.12.1\src\public.rs:
+C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bitflags-2.12.1\src\internal.rs:
+C:\Users\diabl\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bitflags-2.12.1\src\external.rs:

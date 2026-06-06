@@ -182,3 +182,52 @@ fn test_parse_field_access() {
     };
     assert!(matches!(&l.value, Expr::Field(_, _)));
 }
+
+// ── Props in block syntax ─────────────────────────────────────────────────────
+
+#[test]
+fn test_props_in_block_inline() {
+    // text("x") { bold: true } — props inside block fold into args
+    let prog = parse(r#"page P { text("hello") { bold: true } }"#);
+    let Item::Page(page) = &prog.items[0] else {
+        panic!()
+    };
+    let Stmt::Expr(Expr::Call(_, args, block)) = &page.body[0] else {
+        panic!()
+    };
+    assert_eq!(args.len(), 2); // "hello" + bold
+    assert!(args[1].name.as_deref() == Some("bold"));
+    assert!(block.is_none()); // no child stmts
+}
+
+#[test]
+fn test_props_in_block_with_children() {
+    // column { padding: 24 \n text("hi") } — prop + child
+    let prog = parse("page P { column { padding: 24\ntext(\"hi\") } }");
+    let Item::Page(page) = &prog.items[0] else {
+        panic!()
+    };
+    let Stmt::Expr(Expr::Call(_, args, block)) = &page.body[0] else {
+        panic!()
+    };
+    assert_eq!(args.len(), 1); // padding prop
+    assert!(args[0].name.as_deref() == Some("padding"));
+    let stmts = block.as_ref().expect("expected children block");
+    assert_eq!(stmts.len(), 1); // text("hi")
+}
+
+#[test]
+fn test_element_block_no_parens() {
+    // column { text("hi") } — no parens, just block with children
+    let prog = parse(r#"page P { column { text("hi") } }"#);
+    let Item::Page(page) = &prog.items[0] else {
+        panic!()
+    };
+    let Stmt::Expr(Expr::Call(fn_expr, args, block)) = &page.body[0] else {
+        panic!()
+    };
+    assert!(matches!(fn_expr.as_ref(), Expr::Ident(n) if n == "column"));
+    assert!(args.is_empty());
+    let stmts = block.as_ref().expect("expected children block");
+    assert_eq!(stmts.len(), 1);
+}

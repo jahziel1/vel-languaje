@@ -1,0 +1,39 @@
+import auth from "stores/auth"
+
+page Login {
+    state {
+        email    = ""
+        password = ""
+        loading  = false
+    }
+
+    fn submit() {
+        loading = true
+        auth.login()
+        loading = false
+        go("/products")
+    }
+
+    column(padding: 48, gap: 24) {
+        text("Sign in") {
+            fontSize: 28
+            bold: true
+        }
+
+        column(gap: 12) {
+            text("Email")
+            input(email, placeholder: "you@example.com")
+        }
+
+        column(gap: 12) {
+            text("Password")
+            input(password, placeholder: "••••••••")
+        }
+
+        if loading {
+            text("Signing in...")
+        } else {
+            Button("Sign in", onClick: submit) {}
+        }
+    }
+}

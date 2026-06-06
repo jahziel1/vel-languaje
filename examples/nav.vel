@@ -1,0 +1,27 @@
+page Home {
+    fn goToCounter() { go("/counter") }
+
+    column(padding: 32, gap: 24) {
+        text("Home")
+        text("Welcome to Vel navigation demo")
+        Button("Go to Counter", onClick: goToCounter) {}
+    }
+}
+
+page Counter {
+    state { count = 0 }
+
+    fn increment() { count = count + 1 }
+    fn decrement() { count = count - 1 }
+    fn goBack()    { go(back) }
+
+    column(padding: 32, gap: 16) {
+        text("Counter")
+        text("Click + or - to change the count")
+        row(gap: 12) {
+            Button("-", onClick: decrement) {}
+            Button("+", onClick: increment) {}
+        }
+        Button("Back to Home", onClick: goBack) {}
+    }
+}

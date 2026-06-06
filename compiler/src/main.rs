@@ -1,8 +1,7 @@
-mod lexer;
-mod parser;
-
-use lexer::Lexer;
-use parser::Parser;
+use vel_compiler::checker::Checker;
+use vel_compiler::codegen::CodeGen;
+use vel_compiler::lexer::Lexer;
+use vel_compiler::parser::Parser;
 
 fn main() {
     let source = r#"
@@ -19,8 +18,8 @@ page Store {
 
         match products {
             Loading -> spinner()
-            Error(msg) -> text("Error: {msg}", color: #EF4444)
-            Success(data) -> list(data) { p -> ProductCard(product: p) }
+            Error(msg) -> text("Error")
+            Success(data) -> text("ok")
         }
     }
 }
@@ -42,11 +41,44 @@ page Store {
     // ── Parser ────────────────────────────────────────────────────────────────
     println!("\nParsing...\n");
     let tokens2 = Lexer::new(source).tokenize();
-    match Parser::new(tokens2).parse() {
-        Ok(program) => println!("AST: {:#?}", program),
-        Err(e) => println!(
-            "Parse error at {}:{} — {}",
-            e.span.line, e.span.col, e.message
-        ),
+    let program = match Parser::new(tokens2).parse() {
+        Ok(p) => {
+            println!("AST: {:#?}", p);
+            p
+        }
+        Err(e) => {
+            println!(
+                "Parse error at {}:{} — {}",
+                e.span.line, e.span.col, e.message
+            );
+            return;
+        }
+    };
+
+    // ── Type checker ──────────────────────────────────────────────────────────
+    println!("\nType checking...\n");
+    let mut checker = Checker::new();
+    let errors = checker.check(&program);
+    if errors.is_empty() {
+        println!("Type check: OK");
+    } else {
+        for e in errors {
+            println!(
+                "  Type error at {}:{} — {}",
+                e.span.line, e.span.col, e.message
+            );
+        }
+        return;
     }
+
+    // ── Code generator ────────────────────────────────────────────────────────
+    println!("\nGenerating WASM...\n");
+    let mut cg = CodeGen::new();
+    let wasm = cg.generate(&program);
+    println!(
+        "WASM: {} bytes, {} globals, {} functions",
+        wasm.len(),
+        cg.globals.len(),
+        cg.func_count(),
+    );
 }

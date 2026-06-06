@@ -1,0 +1,127 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Vel",
+  "scopeName": "source.vel",
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#string" },
+    { "include": "#keyword" },
+    { "include": "#type-builtin" },
+    { "include": "#type-name" },
+    { "include": "#number" },
+    { "include": "#boolean" },
+    { "include": "#operator" },
+    { "include": "#function-call" },
+    { "include": "#property-key" },
+    { "include": "#punctuation" }
+  ],
+  "repository": {
+    "comment": {
+      "name": "comment.line.double-slash.vel",
+      "match": "//.*$"
+    },
+    "string": {
+      "name": "string.quoted.double.vel",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "meta.embedded.vel punctuation.definition.template-expression.begin.vel",
+          "match": "\\{"
+        },
+        {
+          "name": "meta.embedded.vel punctuation.definition.template-expression.end.vel",
+          "match": "\\}"
+        },
+        {
+          "name": "constant.character.escape.vel",
+          "match": "\\\\."
+        }
+      ]
+    },
+    "keyword": {
+      "patterns": [
+        {
+          "name": "keyword.declaration.vel",
+          "match": "\\b(page|component|layout|store|export|import|from|type|enum)\\b"
+        },
+        {
+          "name": "keyword.control.vel",
+          "match": "\\b(if|else|match|guard)\\b"
+        },
+        {
+          "name": "keyword.other.vel",
+          "match": "\\b(state|derived|on|fn|let|return|none)\\b"
+        },
+        {
+          "name": "keyword.control.flow.vel",
+          "match": "\\b(go|navigate)\\b"
+        }
+      ]
+    },
+    "type-builtin": {
+      "name": "support.type.vel",
+      "match": "\\b(Text|Number|Bool|List|Map|Result|Loading|Success|Error)\\b"
+    },
+    "type-name": {
+      "name": "entity.name.type.vel",
+      "match": "\\b([A-Z][a-zA-Z0-9]*)\\b"
+    },
+    "number": {
+      "name": "constant.numeric.vel",
+      "match": "\\b[0-9]+(\\.[0-9]+)?\\b"
+    },
+    "boolean": {
+      "name": "constant.language.vel",
+      "match": "\\b(true|false)\\b"
+    },
+    "operator": {
+      "patterns": [
+        {
+          "name": "keyword.operator.arrow.vel",
+          "match": "->|=>"
+        },
+        {
+          "name": "keyword.operator.null.vel",
+          "match": "\\?\\.|\\?\\?"
+        },
+        {
+          "name": "keyword.operator.assignment.vel",
+          "match": "="
+        },
+        {
+          "name": "keyword.operator.comparison.vel",
+          "match": "==|!=|<=|>=|<|>"
+        },
+        {
+          "name": "keyword.operator.logical.vel",
+          "match": "\\band\\b|\\bor\\b|\\bnot\\b|&&|\\|\\|"
+        },
+        {
+          "name": "keyword.operator.arithmetic.vel",
+          "match": "[+\\-*/%]"
+        }
+      ]
+    },
+    "function-call": {
+      "name": "entity.name.function.vel",
+      "match": "\\b([a-z][a-zA-Z0-9_]*)(?=\\s*[({])"
+    },
+    "property-key": {
+      "name": "variable.other.property.vel",
+      "match": "\\b([a-z][a-zA-Z0-9_]*)\\s*:"
+    },
+    "punctuation": {
+      "patterns": [
+        {
+          "name": "punctuation.definition.block.vel",
+          "match": "[{}]"
+        },
+        {
+          "name": "punctuation.definition.parameters.vel",
+          "match": "[()]"
+        }
+      ]
+    }
+  }
+}

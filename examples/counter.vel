@@ -1,0 +1,16 @@
+page Counter {
+    state {
+        count = 0
+    }
+
+    fn increment() {
+        count = count + 1
+    }
+
+    column(padding: 24, gap: 16) {
+        text("Vel Counter")
+        text("Current count")
+        Button("Increment")
+        Button("Reset")
+    }
+}

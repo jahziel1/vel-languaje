@@ -1,9 +1,13 @@
 pub mod ast;
+pub(crate) mod ast_ops;
+pub(crate) mod ast_theme;
+mod call;
 mod expr;
 mod stmt;
 #[cfg(test)]
 mod tests;
 mod toplevel;
+mod types;
 
 use crate::lexer::token::{Span, Token, TokenWithSpan};
 use ast::Program;
@@ -147,6 +151,16 @@ impl Parser {
         } else {
             false
         }
+    }
+
+    /// Parse statements until `}`, consuming the closing brace.
+    pub(super) fn parse_stmts_until_rbrace(&mut self) -> ParseResult<Vec<ast::Stmt>> {
+        let mut stmts = Vec::new();
+        while !self.check(&Token::RBrace) && !self.is_at_end() {
+            stmts.push(self.parse_stmt()?);
+        }
+        self.expect_rbrace()?;
+        Ok(stmts)
     }
 
     /// Parse a comma-separated list until `end` token, consuming the `end`.

@@ -1,0 +1,11 @@
+page Products {
+    state {
+        products = try api.get("https://fakestoreapi.com/products")
+    }
+
+    match products {
+        Loading       -> spinner()
+        Success(data) -> text("loaded")
+        Error(msg)    -> text("Error: {msg}")
+    }
+}

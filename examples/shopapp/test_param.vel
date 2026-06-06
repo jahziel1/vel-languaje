@@ -1,0 +1,3 @@
+page Product(id: Number) {
+    text("Product {id}")
+}

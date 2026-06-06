@@ -13,6 +13,7 @@ impl Parser {
             Token::Store => self.parse_store().map(Item::Store),
             Token::Type => self.parse_type_def().map(Item::TypeDef),
             Token::Enum => self.parse_enum_def().map(Item::EnumDef),
+            Token::Theme => self.parse_theme_def().map(Item::ThemeDef),
             other => Err(super::ParseError::new(
                 format!("unexpected token at top level: {:?}", other),
                 self.current_span(),
@@ -108,15 +109,19 @@ impl Parser {
         let mut state = None;
         let mut derived = None;
         let mut fns = Vec::new();
+        let mut api_headers = Vec::new();
 
         while !self.check(&Token::RBrace) && !self.is_at_end() {
             match self.current() {
                 Token::State => state = Some(self.parse_state_block()?),
                 Token::Derived => derived = Some(self.parse_derived_block()?),
                 Token::Fn => fns.push(self.parse_fn()?),
+                Token::Ident(id) if id == "api" => {
+                    api_headers = self.parse_store_api_headers()?;
+                }
                 _ => {
                     return Err(super::ParseError::new(
-                        "expected 'state', 'derived', or 'fn' inside store",
+                        "expected 'state', 'derived', 'fn', or 'api.headers' inside store",
                         self.current_span(),
                     ));
                 }
@@ -128,8 +133,33 @@ impl Parser {
             state,
             derived,
             fns,
+            api_headers,
             span,
         })
+    }
+
+    /// Parse `api.headers { Key: value_expr }` inside a store body.
+    fn parse_store_api_headers(&mut self) -> ParseResult<Vec<(String, super::ast::Expr)>> {
+        self.advance(); // consume 'api'
+        self.expect(&Token::Dot)?;
+        let kw = self.expect_ident()?;
+        if kw != "headers" {
+            return Err(super::ParseError::new(
+                "expected 'headers' after 'api.'",
+                self.current_span(),
+            ));
+        }
+        self.expect_lbrace()?;
+        let mut entries = Vec::new();
+        while !self.check(&Token::RBrace) && !self.is_at_end() {
+            let key = self.expect_ident()?;
+            self.expect(&Token::Colon)?;
+            let val = self.parse_expr(0)?;
+            entries.push((key, val));
+            self.eat(&Token::Comma);
+        }
+        self.expect_rbrace()?;
+        Ok(entries)
     }
 
     // ── Type definition ───────────────────────────────────────────────────────
@@ -210,80 +240,6 @@ impl Parser {
         Ok(Field { name, ty })
     }
 
-    /// Parse a Vel type annotation.
-    pub(super) fn parse_type(&mut self) -> ParseResult<Type> {
-        let ty = match self.current().clone() {
-            Token::Ident(name) => {
-                self.advance();
-                match name.as_str() {
-                    "Text" => Type::Text,
-                    "Number" => Type::Number,
-                    "Bool" => Type::Bool,
-                    "List" => {
-                        self.expect(&Token::Lt)?;
-                        let inner = self.parse_type()?;
-                        self.expect(&Token::Gt)?;
-                        Type::List(Box::new(inner))
-                    }
-                    "Map" => {
-                        self.expect(&Token::Lt)?;
-                        let k = self.parse_type()?;
-                        self.expect(&Token::Comma)?;
-                        let v = self.parse_type()?;
-                        self.expect(&Token::Gt)?;
-                        Type::Map(Box::new(k), Box::new(v))
-                    }
-                    _ => Type::Named(name),
-                }
-            }
-            Token::None => {
-                self.advance();
-                Type::None
-            }
-            Token::LParen => {
-                // function type: () -> ReturnType
-                self.advance();
-                let mut param_types = Vec::new();
-                while !self.check(&Token::RParen) && !self.is_at_end() {
-                    param_types.push(self.parse_type()?);
-                    self.eat(&Token::Comma);
-                }
-                self.expect_rparen()?;
-                self.expect(&Token::Arrow)?;
-                let ret = self.parse_type()?;
-                Type::Fn(param_types, Box::new(ret))
-            }
-            other => {
-                return Err(super::ParseError::new(
-                    format!("expected type, found {:?}", other),
-                    self.current_span(),
-                ));
-            }
-        };
-
-        // Optional suffix: `?`
-        if self.check(&Token::Question) {
-            self.advance();
-            Ok(Type::Optional(Box::new(ty)))
-        } else {
-            Ok(ty)
-        }
-    }
-
-    /// Parse a raw string literal (just the content, no interpolation).
-    pub(super) fn parse_string_literal(&mut self) -> ParseResult<String> {
-        self.expect(&Token::StringStart)?;
-        let content = match self.current().clone() {
-            Token::StringLiteral(s) => {
-                self.advance();
-                s
-            }
-            _ => String::new(),
-        };
-        self.expect(&Token::StringEnd)?;
-        Ok(content)
-    }
-
     /// Parse the body of a page/component/layout/fn until `}`.
     pub(super) fn parse_body(&mut self) -> ParseResult<Vec<Stmt>> {
         let mut stmts = Vec::new();
@@ -292,5 +248,51 @@ impl Parser {
         }
         self.expect_rbrace()?;
         Ok(stmts)
+    }
+
+    // ── Theme definition ──────────────────────────────────────────────────────
+
+    fn parse_theme_def(&mut self) -> ParseResult<ThemeDef> {
+        let span = self.current_span();
+        self.advance(); // consume 'theme'
+        self.expect_lbrace()?;
+        let mut sections = Vec::new();
+        while !self.check(&Token::RBrace) && !self.is_at_end() {
+            sections.push(self.parse_theme_section()?);
+        }
+        self.expect_rbrace()?;
+        Ok(ThemeDef { sections, span })
+    }
+
+    fn parse_theme_section(&mut self) -> ParseResult<ThemeSection> {
+        let name = self.expect_ident()?;
+        self.expect_lbrace()?;
+        let mut entries = Vec::new();
+        while !self.check(&Token::RBrace) && !self.is_at_end() {
+            let key = self.expect_ident()?;
+            self.expect(&Token::Colon)?;
+            let value = match self.current() {
+                Token::Color(hex) => {
+                    let hex = hex.clone();
+                    self.advance();
+                    ThemeTokenValue::Color(hex)
+                }
+                Token::Number(n) => {
+                    let n = *n;
+                    self.advance();
+                    ThemeTokenValue::Number(n)
+                }
+                _ => {
+                    return Err(super::ParseError::new(
+                        "expected color (#hex) or number in theme token",
+                        self.current_span(),
+                    ));
+                }
+            };
+            entries.push((key, value));
+            self.eat(&Token::Comma);
+        }
+        self.expect_rbrace()?;
+        Ok(ThemeSection { name, entries })
     }
 }

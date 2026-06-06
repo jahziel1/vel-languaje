@@ -2,6 +2,7 @@
 // they will be consumed by the type checker and code generator in later phases.
 #![allow(dead_code)]
 
+pub use super::ast_ops::{BinOp, UnOp};
 use crate::lexer::token::Span;
 
 // ── Program ───────────────────────────────────────────────────────────────────
@@ -22,6 +23,7 @@ pub enum Item {
     Store(Store),
     TypeDef(TypeDef),
     EnumDef(EnumDef),
+    ThemeDef(ThemeDef),
 }
 
 #[derive(Debug, Clone)]
@@ -66,6 +68,8 @@ pub struct Store {
     pub state: Option<StateBlock>,
     pub derived: Option<DerivedBlock>,
     pub fns: Vec<FnDef>,
+    /// `api.headers { Key: value_expr }` — applied to every API call automatically.
+    pub api_headers: Vec<(String, Expr)>,
     pub span: Span,
 }
 
@@ -129,6 +133,8 @@ pub enum Stmt {
     Let(LetStmt),
     If(IfStmt),
     Match(MatchStmt),
+    /// `item -> body` inside a list() block: param name + body stmts.
+    ForEach(String, Vec<Stmt>),
     Expr(Expr),
 }
 
@@ -169,6 +175,16 @@ pub enum OnEvent {
     Mount,
     Unmount,
     Key(String),
+    Responsive(Breakpoint),
+}
+
+#[derive(Debug, Clone)]
+pub enum Breakpoint {
+    Phone,   // < 480px
+    Mobile,  // < 768px
+    Tablet,  // < 1024px
+    Desktop, // >= 1024px
+    Wide,    // >= 1440px
 }
 
 #[derive(Debug, Clone)]
@@ -216,6 +232,10 @@ pub enum MatchBody {
     Expr(Expr),
     Block(Vec<Stmt>),
 }
+
+// ── Theme ─────────────────────────────────────────────────────────────────────
+
+pub use super::ast_theme::{ThemeDef, ThemeSection, ThemeTokenValue};
 
 // ── Expressions ───────────────────────────────────────────────────────────────
 
@@ -271,26 +291,4 @@ pub struct Arg {
 pub enum ObjectEntry {
     Field(String, Expr),
     Spread(Expr),
-}
-
-#[derive(Debug, Clone)]
-pub enum BinOp {
-    Add,
-    Sub,
-    Mul,
-    Div,
-    Eq,
-    NotEq,
-    Lt,
-    Gt,
-    LtEq,
-    GtEq,
-    And,
-    Or,
-}
-
-#[derive(Debug, Clone)]
-pub enum UnOp {
-    Not,
-    Neg,
 }
